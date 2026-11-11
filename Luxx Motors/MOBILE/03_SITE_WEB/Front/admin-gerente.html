@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXX Admin - Gerência</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-50 flex">
+
+    <!-- Menu lateral -->
+    <aside class="w-72 bg-slate-900 min-h-screen text-white p-6 sticky top-0 h-screen shadow-2xl">
+        <div class="mb-10 px-2">
+            <h2 class="font-black text-2xl tracking-tighter">LUXX <span class="text-blue-500">MOTORS</span></h2>
+            <div class="flex items-center gap-2 mt-2">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Painel do Gerente</p>
+            </div>
+        </div>
+        
+        <nav class="space-y-3">
+
+            <button onclick="showTab('cadastro')" id="btn-cadastro" class="w-full flex items-center gap-3 p-4 bg-blue-600 rounded-xl transition-all text-left font-bold text-white">
+                <i class="fas fa-plus-circle"></i> Alimentar Estoque
+            </button>
+
+            <button onclick="showTab('gestao'); carregarPainelLeads();" id="btn-gestao" class="w-full flex items-center gap-3 p-4 hover:bg-slate-800 rounded-xl transition-all text-slate-400 hover:text-white text-left font-medium">
+                <i class="fas fa-list-ul"></i> Leads
+            </button>
+
+            <button onclick="showTab('operacional'); carregarOperacional();" id="btn-operacional" class="w-full flex items-center gap-3 p-4 hover:bg-slate-800 rounded-xl transition-all text-slate-400 hover:text-white text-left font-medium">
+                <i class="fas fa-tasks"></i> Operacional (ADM)
+            </button>
+
+            <button onclick="showTab('financeiro')" id="btn-financeiro" class="w-full flex items-center gap-3 p-4 hover:bg-slate-800 rounded-xl transition-all text-slate-400 hover:text-white text-left font-medium">
+                <i class="fas fa-dollar-sign"></i> Financeiro & KPIs
+            </button>
+            
+            <div class="pt-10 border-t border-slate-800 mt-10">
+                <a href="index.html" class="flex items-center gap-3 p-4 text-red-400 hover:bg-red-950/30 rounded-xl transition-all font-medium">
+                    <i class="fas fa-power-off"></i> Sair do Sistema
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-10 overflow-y-auto">
+
+        <section id="tab-operacional" class="tab-content">
+            <header class="mb-10">
+                <h1 class="text-4xl font-black text-slate-800">Controle Operacional</h1>
+                <p class="text-slate-500 mt-1">Monitoramento de Financiamentos e Revisões agendadas.</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <h3 class="font-black text-slate-800 mb-4 uppercase text-xs tracking-widest">Próximas Revisões</h3>
+                    <div id="lista-revisoes" class="space-y-4">
+                        <p class="text-slate-400 text-sm">Carregando agendamentos...</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <h3 class="font-black text-slate-800 mb-4 uppercase text-xs tracking-widest">Financiamentos Pendentes</h3>
+                    <div id="lista-financiamentos" class="space-y-4">
+                        <p class="text-slate-400 text-sm">Carregando propostas...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-financeiro" class="tab-content">
+            <header class="mb-10">
+                <h1 class="text-4xl font-black text-slate-800">Indicadores Estratégicos</h1>
+                <p class="text-slate-500 mt-1">Visão geral de desempenho e saúde financeira.</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div id="kpi-total-vendido" class="bg-blue-600 p-8 rounded-3xl text-white shadow-xl shadow-blue-200">
+                    <p class="text-xs font-bold uppercase opacity-80">Total Vendido</p>
+                    <h2 class="text-3xl font-black mt-2">R$ 0,00</h2>
+                </div>
+                <div id="kpi-estoque-disponivel" class="bg-slate-900 p-8 rounded-3xl text-white">
+                    <p class="text-xs font-bold uppercase opacity-80">Estoque disponível</p>
+                    <h2 class="text-3xl font-black mt-2">0</h2>
+                </div>
+                <div id="kpi-conversao-leads" class="bg-white p-8 rounded-3xl border border-slate-100">
+                    <p class="text-xs font-bold text-slate-400 uppercase">Conversão de Leads</p>
+                    <h2 class="text-3xl font-black text-slate-800 mt-2">0%</h2>
+                </div>
+            </div>
+
+            <div id="kpi-vendas-equipe" class="space-y-4">
+                <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <h2 class="text-lg font-black text-slate-800 mb-4">Vendas da equipe</h2>
+                    <div id="kpi-vendas-equipe-list" class="space-y-4 text-slate-700">
+                        <p class="text-sm text-slate-500">Carregando dados da equipe...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seção: Alimentar Estoque -->
+        <section id="tab-cadastro" class="tab-content active">
+            <header class="mb-10">
+                <h1 class="text-4xl font-black text-slate-800 tracking-tight">Novo Veículo</h1>
+                <p class="text-slate-500 mt-1">Integração direta com o banco de dados SQL Server.</p>
+            </header>
+            
+            <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
+                <form id="formCadastroVeiculo" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Marca</label>
+                            <input type="text" id="marca" placeholder="Ex: Chevrolet" required class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Modelo</label>
+                            <input type="text" id="modelo" placeholder="Ex: Onix Plus" required class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Ano</label>
+                            <input type="number" id="ano" placeholder="2024" required class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Preço de Venda</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-4 text-slate-400 font-bold">R$</span>
+                                <input type="number" step="0.01" id="preco" required class="w-full bg-slate-50 border-none p-4 pl-12 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Cor</label>
+                            <input type="text" id="cor" placeholder="Ex: Branco Pérola" required class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Quilometragem</label>
+                            <input type="number" id="quilometragem" placeholder="0" required class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Tipo de Câmbio</label>
+                            <select id="cambio" class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none font-medium">
+                                <option>Automático</option>
+                                <option>Manual</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Categoria</label>
+                            <input type="text" id="categoria" placeholder="Ex: Flex / SUV" class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Capacidade (Pessoas)</label>
+                            <input type="text" id="capacidade" placeholder="Ex: 5 Lugares" class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase mb-2 tracking-widest">Nome da Imagem (.webp)</label>
+                            <input type="text" id="imagem" placeholder="Ex: civic-2024" class="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            <p class="text-[10px] text-slate-400 mt-1 italic">Apenas o nome, sem a extensão .webp</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-6">
+                        <button type="submit" class="bg-slate-900 text-white px-12 py-4 rounded-2xl font-black hover:bg-blue-600 transition-all shadow-xl shadow-slate-900/10">
+                            EFETUAR CADASTRO
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Seção: Leads -->
+        <section id="tab-gestao" class="tab-content">
+            <header class="mb-10">
+                <h1 class="text-4xl font-black text-slate-800 tracking-tight">Painel Geral de Leads</h1>
+                <p class="text-slate-500 mt-1">Visão unificada de Revisões, Test Drives, Financiamentos e Vendas.</p>
+            </header>
+
+            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b border-slate-100">
+                        <tr>
+                            <th class="p-6 text-xs font-black text-slate-400 uppercase tracking-widest">Cliente</th>
+                            <th class="p-6 text-xs font-black text-slate-400 uppercase tracking-widest">Serviço</th>
+                            <th class="p-6 text-xs font-black text-slate-400 uppercase tracking-widest">Responsável</th>
+                            <th class="p-6 text-xs font-black text-slate-400 uppercase tracking-widest">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-leads-body" class="divide-y divide-slate-100">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+        
+    </main>
+
+    <script>
+
+        // Captura o envio do formulário de cadastro de veículo.
+        // Aqui eu trato o submit, crio o objeto e envio para a API.
+        document.getElementById('formCadastroVeiculo').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            console.log("Iniciando cadastro...");
+
+            const veiculo = {
+                Marca: document.getElementById('marca').value,
+                Modelo: document.getElementById('modelo').value,
+                Ano: parseInt(document.getElementById('ano').value),
+                Capacidade: document.getElementById('capacidade').value,
+                Preco: parseFloat(document.getElementById('preco').value),
+                Cor: document.getElementById('cor').value,
+                Cambio: document.getElementById('cambio').value,
+                Categoria: document.getElementById('categoria').value,
+                Quilometragem: parseInt(document.getElementById('quilometragem').value),
+                // Adiciona a extensão automaticamente
+                Imagem: document.getElementById('imagem').value ? document.getElementById('imagem').value + ".webp" : "sem-foto.webp",
+                // O status "Disponível" será tratado no C#, mas você pode enviar aqui também:
+                Status: "Disponível"
+            };
+
+            try {
+                const response = await fetch('http://localhost:5107/api/veiculos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(veiculo)
+                });
+
+                if (response.ok) {
+                    alert("✅ Veículo cadastrado com sucesso e disponível no estoque!");
+                    location.reload();
+                } else {
+                    const erro = await response.text();
+                    alert("❌ Erro ao cadastrar: " + erro);
+                }
+            } catch (error) {
+                alert("❌ Erro de conexão com o servidor.");
+            }
+        });
+
+        // Função utilitária para buscar dados da API.
+        // Uso em diferentes painéis porque todas as telas consomem recursos REST.
+        const fetchData = async (url, label) => {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    console.error(`[FALHA] ${label}: status ${response.status}`);
+                    return [];
+                }
+                const data = await response.json();
+                console.log(`[SUCESSO] ${label}:`, data.length, 'registros');
+                return data;
+            } catch (error) {
+                console.error(`[FALHA] ${label}:`, error);
+                return [];
+            }
+        };
+
+        // Função principal do painel de leads.
+        // Ela carrega revisões, financiamentos, test drives e vendas,
+        // e mapeia os ids de cliente para nomes completos.
+        async function carregarPainelLeads() {
+            const tbody = document.getElementById('tabela-leads-body');
+            tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-400">Sincronizando base de dados...</td></tr>';
+
+            console.log("--- Iniciando Rastreio de Leads com Nomes ---");
+            
+            try {
+                // Buscamos todas as tabelas de leads MAIS a tabela de clientes em paralelo
+                const [revisoes, financiamentos, testDrives, vendas, clientes] = await Promise.all([
+                    fetchData('http://localhost:5107/api/revisoes', 'REVISÕES'),
+                    fetchData('http://localhost:5107/api/financiamentos', 'FINANCIAMENTOS'),
+                    fetchData('http://localhost:5107/api/testdrive', 'TEST DRIVES'),
+                    fetchData('http://localhost:5107/api/vendas', 'VENDAS'),
+                    fetchData('http://localhost:5107/api/clientes', 'CLIENTES')
+                ]);
+
+                console.log('Clientes carregados:', clientes);
+                const mapaClientes = {};
+                clientes.forEach(c => {
+                    const id = c.Id_cliente || c.id_cliente || c.id || c.Id;
+                    const nome = c.nome_completo || c.Nome_completo || c.nome || c.Nome;
+                    if (id && nome) mapaClientes[id] = nome;
+                });
+                console.log('Mapa de clientes:', mapaClientes);
+
+                // Função auxiliar para pegar o nome ou retornar "Cliente [ID]" caso não ache no mapa
+                const obterNomeCliente = (id) => mapaClientes[id] || `Cliente ${id}`;
+
+                const getClienteId = (item) => item.id_cliente || item.Id_cliente || item.id || item.Id;
+
+                let htmlFinal = '';
+
+                // 1. REVISÕES
+                revisoes.forEach(r => {
+                    const nomeCliente = obterNomeCliente(getClienteId(r));
+                    htmlFinal += `<tr><td class="p-6 font-bold text-slate-700">${nomeCliente}</td><td class="p-6"><span class="bg-blue-100 text-blue-700 p-1 rounded text-[10px] font-bold">REVISÃO</span></td><td class="p-6 text-sm">Pós-Venda</td><td class="p-6 text-sm">${r.status || 'Agendado'}</td></tr>`;
+                });
+
+                // 2. FINANCIAMENTOS
+                financiamentos.forEach(f => {
+                    const nomeCliente = obterNomeCliente(getClienteId(f));
+                    htmlFinal += `<tr><td class="p-6 font-bold text-slate-700">${nomeCliente}</td><td class="p-6"><span class="bg-green-100 text-green-700 p-1 rounded text-[10px] font-bold">FINANC.</span></td><td class="p-6 text-sm">Vendas</td><td class="p-6 text-sm">${f.status || 'Análise'}</td></tr>`;
+                });
+
+                // 3. TEST DRIVES
+                testDrives.forEach(t => {
+                    const nomeCliente = obterNomeCliente(getClienteId(t));
+                    htmlFinal += `<tr><td class="p-6 font-bold text-slate-700">${nomeCliente}</td><td class="p-6"><span class="bg-amber-100 text-amber-700 p-1 rounded text-[10px] font-bold">TEST DRIVE</span></td><td class="p-6 text-sm">Consultor</td><td class="p-6 text-sm">${t.Status || t.status || 'Confirmado'}</td></tr>`;
+                });
+
+                // 4. VENDAS
+                vendas.forEach(v => {
+                    const nomeCliente = obterNomeCliente(getClienteId(v));
+                    htmlFinal += `<tr><td class="p-6 font-bold text-slate-700">${nomeCliente}</td><td class="p-6"><span class="bg-purple-100 text-purple-700 p-1 rounded text-[10px] font-bold">VENDA</span></td><td class="p-6 text-sm">Vendas</td><td class="p-6 text-sm">${v.status || 'Finalizado'}</td></tr>`;
+                });
+
+                tbody.innerHTML = htmlFinal || '<tr><td colspan="4" class="p-10 text-center">Nenhuma movimentação registrada.</td></tr>';
+
+            } catch (error) {
+                console.error("Erro geral no carregamento:", error);
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-red-500">Erro ao processar dados das frentes.</td></tr>';
+            }
+        }
+
+        // Função do painel operacional.
+        // Ela exibe próximas revisões e financiamentos pendentes com informações de veículo.
+        async function carregarOperacional() {
+            const revisoesContainer = document.getElementById('lista-revisoes');
+            const financiamentosContainer = document.getElementById('lista-financiamentos');
+
+            revisoesContainer.innerHTML = '<p class="text-slate-400 text-sm">Carregando revisões...</p>';
+            financiamentosContainer.innerHTML = '<p class="text-slate-400 text-sm">Carregando financiamentos...</p>';
+
+            try {
+                const [revisoes, financiamentos, veiculos] = await Promise.all([
+                    fetchData('http://localhost:5107/api/revisoes', 'REVISÕES'),
+                    fetchData('http://localhost:5107/api/financiamentos', 'FINANCIAMENTOS'),
+                    fetchData('http://localhost:5107/api/veiculos', 'VEÍCULOS')
+                ]);
+
+                const veiculosMapa = {};
+                veiculos.forEach(v => {
+                    const id = v.Id_veiculo || v.id_veiculo || v.Id || v.id;
+                    const marca = v.Marca || v.marca || '';
+                    const modelo = v.Modelo || v.modelo || '';
+                    const ano = v.Ano || v.ano || '';
+                    const nome = [marca, modelo, ano].filter(Boolean).join(' ').trim();
+                    veiculosMapa[id] = {
+                        nome: nome || 'Veículo desconhecido',
+                        modelo,
+                        ano
+                    };
+                });
+
+                const formataData = valor => {
+                    if (!valor) return 'Data não disponível';
+                    const date = new Date(valor);
+                    return isNaN(date) ? valor : date.toLocaleDateString('pt-BR');
+                };
+
+                const agendadas = revisoes.filter(r => {
+                    const status = (r.status || r.Status || '').toString().toLowerCase();
+                    return status.includes('agendado');
+                });
+
+                if (agendadas.length === 0) {
+                    revisoesContainer.innerHTML = '<p class="text-slate-500 text-sm">Nenhuma revisão futura agendada.</p>';
+                } else {
+                    revisoesContainer.innerHTML = agendadas.map(r => {
+                        const data = formataData(r.data_revisao || r.Data_revisao || r.data);
+                        const status = r.status || r.Status || 'Agendado';
+                        const servico = r.servico || r.Servico || 'Não informado';
+                        return `
+                            <div class="rounded-3xl border border-slate-100 bg-slate-50 p-5 shadow-sm">
+                                <div class="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+                                    <div>
+                                        <p class="text-xs uppercase font-bold text-slate-400">Data</p>
+                                        <p class="text-lg font-bold text-slate-800">${data}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs uppercase font-bold text-slate-400">Status</p>
+                                        <p class="text-lg font-bold text-blue-600">${status}</p>
+                                    </div>
+                                    <div class="max-w-sm">
+                                        <p class="text-xs uppercase font-bold text-slate-400">Serviço</p>
+                                        <p class="text-lg font-bold text-slate-800">${servico}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                const pendentes = financiamentos.filter(f => {
+                    const status = (f.status || f.Status || '').toString().toLowerCase();
+                    return !status || status.includes('pendente') || status.includes('analise') || status.includes('análise');
+                });
+
+                if (pendentes.length === 0) {
+                    financiamentosContainer.innerHTML = '<p class="text-slate-500 text-sm">Nenhum financiamento pendente encontrado.</p>';
+                } else {
+                    financiamentosContainer.innerHTML = pendentes.map(f => {
+                        const veiculo = veiculosMapa[f.Id_veiculo || f.id_veiculo || f.Id || f.id] || {};
+                        const carro = veiculo.nome || `${veiculo.modelo || 'Veículo'} ${veiculo.ano || ''}`.trim();
+                        const parcelas = f.Parcelas || f.parcelas || 'N/A';
+                        const valor = f.Valor_simulado || f.valor_simulado || f.Valor_simulado || f.valor_simulado || 0;
+                        const valorFormatado = Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        return `
+                            <div class="rounded-3xl border border-slate-100 bg-slate-50 p-5 shadow-sm">
+                                <div class="flex flex-col gap-3">
+                                    <div>
+                                        <p class="text-xs uppercase font-bold text-slate-400">Carro</p>
+                                        <p class="text-lg font-bold text-slate-800">${carro}</p>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-xs uppercase font-bold text-slate-400">Parcelas</p>
+                                            <p class="text-lg font-bold text-slate-800">${parcelas}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs uppercase font-bold text-slate-400">Valor simulado</p>
+                                            <p class="text-lg font-bold text-slate-800">${valorFormatado}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('Erro carregar operacional:', error);
+                revisoesContainer.innerHTML = '<p class="text-red-500 text-sm">Erro ao carregar revisões.</p>';
+                financiamentosContainer.innerHTML = '<p class="text-red-500 text-sm">Erro ao carregar financiamentos.</p>';
+            }
+        }
+
+        // Carrega e calcula os KPIs da aba financeira.
+        // Aqui eu tomo os dados de vendas, clientes, veículos e vendedores
+        // para mostrar os valores e rankings de desempenho.
+        async function carregarKPIs() {
+            const totalVendidoEl = document.querySelector('#kpi-total-vendido h2');
+            const estoqueDisponivelEl = document.querySelector('#kpi-estoque-disponivel h2');
+            const conversaoLeadsEl = document.querySelector('#kpi-conversao-leads h2');
+            const vendasEquipeList = document.getElementById('kpi-vendas-equipe-list');
+
+            totalVendidoEl.innerText = 'Carregando...';
+            estoqueDisponivelEl.innerText = '...';
+            conversaoLeadsEl.innerText = '...';
+            vendasEquipeList.innerHTML = '<p class="text-slate-500 text-sm">Carregando dados da equipe...</p>';
+
+            try {
+                const [vendas, clientes, veiculos, vendedores] = await Promise.all([
+                    fetchData('http://localhost:5107/api/vendas', 'VENDAS'),
+                    fetchData('http://localhost:5107/api/clientes', 'CLIENTES'),
+                    fetchData('http://localhost:5107/api/veiculos', 'VEÍCULOS'),
+                    fetchData('http://localhost:5107/api/vendedores', 'VENDEDORES')
+                ]);
+
+                const totalVendido = vendas.reduce((sum, v) => sum + Number(v.valor_total || 0), 0);
+                totalVendidoEl.innerText = totalVendido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                const estoqueDisponivel = veiculos.filter(v => (v.Status || v.status || '').toString().toLowerCase().includes('dispon')).length;
+                estoqueDisponivelEl.innerText = estoqueDisponivel;
+
+                const totalClientes = clientes.length;
+                const clientesCompraram = new Set(vendas.map(v => v.id_cliente || v.Id_cliente || v.id || v.Id)).size;
+                const conversao = totalClientes ? ((clientesCompraram / totalClientes) * 100).toFixed(1) : '0.0';
+                conversaoLeadsEl.innerText = `${conversao}%`;
+
+                const vendasPorVendedor = vendedores.map(vendedor => {
+                    const idVendedor = vendedor.Id_vendedor || vendedor.id_vendedor || vendedor.Id || vendedor.id;
+                    const vendasDoVendedor = vendas.filter(v => (v.id_vendedor || v.Id_vendedor || v.id_vendedor || v.Id || 0) === idVendedor);
+                    const total = vendasDoVendedor.reduce((sum, item) => sum + Number(item.valor_total || 0), 0);
+                    const ticketMedio = vendasDoVendedor.length ? total / vendasDoVendedor.length : 0;
+                    return {
+                        nome: vendedor.Nome || vendedor.nome || 'Vendedor desconhecido',
+                        total,
+                        ticketMedio,
+                        qtd: vendasDoVendedor.length
+                    };
+                }).filter(v => v.qtd > 0).sort((a, b) => b.total - a.total);
+
+                if (vendasPorVendedor.length === 0) {
+                    vendasEquipeList.innerHTML = '<p class="text-slate-500 text-sm">Nenhuma venda registrada por vendedor.</p>';
+                } else {
+                    vendasEquipeList.innerHTML = vendasPorVendedor.map(v => {
+                        return `
+                            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-xs uppercase font-bold text-slate-400">${v.nome}</p>
+                                        <p class="text-lg font-black text-slate-800">${v.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs uppercase font-bold text-slate-400">Ticket médio</p>
+                                        <p class="text-lg font-black text-slate-800">${v.ticketMedio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('Erro carregar KPIs:', error);
+                totalVendidoEl.innerText = 'Erro';
+                estoqueDisponivelEl.innerText = 'Erro';
+                conversaoLeadsEl.innerText = 'Erro';
+                vendasEquipeList.innerHTML = '<p class="text-red-500 text-sm">Erro ao carregar KPIs.</p>';
+            }
+        }
+
+        // Controla quais abas ficam visíveis no painel.
+        // Sempre que eu mudo para a aba financeira, carrego os KPIs.
+        function showTab(tabName) {
+            // Esconde todos os conteúdos
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            // Mostra a aba clicada
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Atualiza o estilo dos botões na sidebar
+            const menuButtons = {
+                'cadastro': 'btn-cadastro',
+                'gestao': 'btn-gestao',
+                'operacional': 'btn-operacional',
+                'financeiro': 'btn-financeiro'
+            };
+
+            Object.keys(menuButtons).forEach(key => {
+                const btn = document.getElementById(menuButtons[key]);
+                if(key === tabName) {
+                    btn.className = "w-full flex items-center gap-3 p-4 bg-blue-600 rounded-xl transition-all text-left font-bold shadow-lg shadow-blue-900/20 text-white";
+                } else {
+                    btn.className = "w-full flex items-center gap-3 p-4 hover:bg-slate-800 rounded-xl transition-all text-slate-400 hover:text-white text-left font-medium";
+                }
+            });
+
+            if (tabName === 'financeiro') {
+                carregarKPIs();
+            }
+        }
+
+        // Essa função é chamada quando eu quero atribuir um lead a um vendedor.
+        // Ela valida o campo, exibe uma mensagem e bloqueia o botão para evitar reenvio.
+        function atribuir(btn, cliente) {
+            const select = btn.closest('tr').querySelector('.vendedor-select');
+            if (!select.value) return alert("Selecione um vendedor primeiro!");
+            alert(`Sucesso! Lead ${cliente} enviado para ${select.value}.`);
+            btn.disabled = true;
+            btn.innerText = "ENVIADO";
+            btn.className = "bg-green-500 text-white px-4 py-2 rounded-xl text-xs font-black cursor-not-allowed";
+        }
+
+        // Ao carregar a página, já trago os leads para o painel de gestão.
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarPainelLeads();
+        });
+    </script>
+</body>
+</html>

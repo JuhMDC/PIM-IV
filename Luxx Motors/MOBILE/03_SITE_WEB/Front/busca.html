@@ -1,0 +1,124 @@
+<!-- Página de resultados da busca -->
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Header com navegação e busca -->
+    <header class="bg-slate-800 text-white h-20 flex items-center px-8 justify-between sticky top-0 z-50">
+    
+        <!-- Logo -->
+        <div class="flex items-center">
+            <a href="index.html">
+                <img src="logo-luxx4.jpg" alt="LUXX MOTORS" class="h-12 w-auto object-contain">
+            </a>
+        </div>
+
+        <!-- Menu principal -->
+        <nav>
+            <ul class="flex gap-6 text-sm font-medium">
+                <li><a href="index.html" class="hover:text-gray-300 transition-colors">Home</a></li>
+                <li><a href="veiculos.html" class="hover:text-gray-300 transition-colors">Veículos</a></li>
+                <li><a href="cadastro.html" class="hover:text-gray-300 transition-colors">Cadastro</a></li>
+                <li><a href="testdrive.html" class="hover:text-gray-300 transition-colors">Test Drive</a></li>
+                <li><a href="financiamento.html" class="hover:text-gray-300 transition-colors">Financiamento</a></li>
+                <li><a href="revisao.html" class="hover:text-gray-300 transition-colors">Revisão</a></li>
+            </ul>
+        </nav>
+
+        <!-- Campo de busca -->
+        <form action="busca.html" method="GET" class="flex gap-2">
+            <input type="text" name="q" placeholder="Pesquisar carro..." 
+                   class="px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-slate-400 text-sm">
+            <button type="submit" class="bg-slate-500 hover:bg-slate-600 px-4 py-2 rounded-md transition-colors text-sm">
+                Buscar
+            </button>
+        </form>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Resultados da busca</h1>
+        <p id="search-info" class="text-gray-600 mb-8">Carregando resultados...</p>
+
+        <!-- Grid de resultados -->
+        <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        </div>
+
+        <!-- Estado vazio (sem resultados) -->
+        <div id="no-results" class="hidden bg-white rounded-lg shadow-md p-8 text-center">
+            <p class="text-gray-600 mb-4">Não encontramos veículos com este termo de busca.</p>
+            <a href="index.html#veiculos" class="inline-block bg-slate-500 hover:bg-slate-600 text-white py-2 px-6 rounded-md transition-colors">
+                Ver todos os veículos
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Lista mockada de veículos (simulando dados da API)
+        const allCars = [
+            { id: 1, name: 'Chevrolet Onix', marca: 'Chevrolet', desc: '2024, 1.0 Turbo, Flex, Branco', price: 'R$ 76.900', val: 76900, img: 'https://images.unsplash.com/photo-1758218921502-c109213fe9fd?w=600' },
+            { id: 2, name: 'Fiat Argo', marca: 'Fiat', desc: '2023, 1.3, Flex, Vermelho', price: 'R$ 68.500', val: 68500, img: 'https://images.unsplash.com/photo-1650132758640-e3481c46014e?w=600' },
+            { id: 3, name: 'Hyundai HB20', marca: 'Hyundai', desc: '2024, 1.0, Flex, Prata', price: 'R$ 72.000', val: 72000, img: 'https://images.unsplash.com/photo-1669606070123-ed48fdcffc9b?w=600' },
+            { id: 4, name: 'Volkswagen Polo', marca: 'Volkswagen', desc: '2023, 1.0 TSI, Flex, Cinza', price: 'R$ 82.900', val: 82900, img: 'https://images.unsplash.com/photo-1691845559883-60233d2a8574?w=600' },
+            { id: 5, name: 'Jeep Renegade', marca: 'Jeep', desc: '2023, 1.8, Flex, Branco', price: 'R$ 115.000', val: 115000, img: 'https://images.unsplash.com/photo-1602580931216-5fc46911d419?w=600' },
+            { id: 6, name: 'Chevrolet Tracker', marca: 'Chevrolet', desc: '2024, 1.0 Turbo, Flex, Preto', price: 'R$ 132.900', val: 132900, img: 'https://images.unsplash.com/photo-1740355235214-965fe429c972?w=600' }
+        ];
+
+        // Captura o termo da URL (?q=...)
+        const params = new URLSearchParams(window.location.search);
+        const query = params.get('q') || '';
+        const searchLower = query.toLowerCase();
+
+        // Filtra os veículos com base no termo buscado
+        const filtered = allCars.filter(car => 
+            car.name.toLowerCase().includes(searchLower) ||
+            car.marca.toLowerCase().includes(searchLower) ||
+            car.desc.toLowerCase().includes(searchLower)
+        );
+
+        // Referências dos elementos da tela
+        const info = document.getElementById('search-info');
+        const grid = document.getElementById('results-grid');
+        const emptyState = document.getElementById('no-results');
+
+        // Renderização dos resultados
+        if (filtered.length > 0) {
+            info.innerText = `Encontramos ${filtered.length} resultado(s) para "${query}"`;
+
+            filtered.forEach(car => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <img src="${car.img}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-2 text-gray-900">${car.name}</h3>
+                            <p class="text-gray-600 text-sm mb-3">${car.desc}</p>
+                            <p class="text-2xl font-bold text-green-600 mb-4">${car.price}</p>
+                            
+                            <!-- Redireciona para financiamento com parâmetros -->
+                            <a href="financiamento.html?car=${encodeURIComponent(car.name)}&price=${car.val}" 
+                               class="block w-full bg-slate-500 hover:bg-slate-600 text-white py-2 rounded-md text-center">
+                               Comprar
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+
+        } else {
+            info.innerText = `Nenhum resultado encontrado para "${query}"`;
+            emptyState.classList.remove('hidden');
+        }
+    </script>
+
+    <!-- Plugin de acessibilidade VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+</body>

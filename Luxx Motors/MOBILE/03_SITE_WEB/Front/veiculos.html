@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veículos - LUXX MOTORS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <header class="bg-slate-800 text-white h-20 flex items-center px-8 justify-between sticky top-0 z-50">
+        
+        <div class="flex items-center">
+            <a href="index.html">
+                <img src="logo-luxx4.jpg" alt="LUXX MOTORS" class="h-12 w-auto object-contain">
+            </a>
+        </div>
+
+        <nav>
+            <ul class="flex gap-6 text-sm font-medium">
+                <li><a href="index.html" class="hover:text-gray-300">Home</a></li>
+                <li><a href="veiculos.html" class="text-gray-300 border-b-2 border-gray-300">Veículos</a></li>
+                <li><a href="cadastro.html" class="hover:text-gray-300">Cadastro</a></li>
+                <li><a href="testdrive.html" class="hover:text-gray-300">Test Drive</a></li>
+                <li><a href="financiamento.html" class="hover:text-gray-300">Financiamento</a></li>
+                <li><a href="revisao.html" class="hover:text-gray-300">Revisão</a></li>
+            </ul>
+        </nav>
+        <form action="busca.html" method="GET" class="flex gap-2">
+            <input type="text" name="q" placeholder="Pesquisar..." class="px-4 py-2 border rounded-md text-black text-sm outline-none">
+            <button type="submit" class="bg-slate-600 hover:bg-slate-700 px-4 py-2 rounded-md transition-colors text-sm">Buscar</button>
+        </form>
+    </header>
+
+    <div class="flex flex-col md:flex-row">
+        <aside class="w-full md:w-72 bg-white shadow-lg md:h-[calc(100vh-5rem)] overflow-y-auto sticky top-20 p-6 space-y-6">
+            <h2 class="text-xl font-bold text-gray-900 border-b pb-2">Personalizar busca</h2>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Marca</label>
+                <select id="f-brand" class="w-full p-2 border rounded-md outline-none focus:ring-2 focus:ring-slate-500">
+                    <option value="">Todas</option>
+                    <option>Chevrolet</option><option>Fiat</option><option>Hyundai</option>
+                    <option>Volkswagen</option><option>Jeep</option><option>Nissan</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Modelo</label>
+                <select id="f-model" class="w-full p-2 border rounded-md outline-none focus:ring-2 focus:ring-slate-500">
+                    <option value="">Todos</option>
+                    <option>Onix</option><option>Argo</option><option>HB20</option>
+                    <option>Polo</option><option>Renegade</option><option>Tracker</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Cor</label>
+                <select id="f-color" class="w-full p-2 border rounded-md outline-none focus:ring-2 focus:ring-slate-500">
+                    <option value="">Todas</option>
+                    <option>Branco</option><option>Preto</option><option>Prata</option><option>Vermelho</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Preço Máximo</label>
+                <input type="range" id="f-price" min="30000" max="400000" step="1000" value = "400000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-slate-800">
+                <div class="flex justify-between text-xs font-bold mt-2 text-slate-800">
+                    <span>R$ 30.000</span>
+                    <span id="price-val">R$ 400.000</span>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Quilometragem</label>
+                <div class="flex items-center gap-2">
+                    <input type="number" id="f-km-min" placeholder="Min" class="w-full p-2 border rounded-md text-sm outline-none">
+                    <span class="text-gray-400">km</span>
+                    <input type="number" id="f-km-max" placeholder="Max" class="w-full p-2 border rounded-md text-sm outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Câmbio</label>
+                <div class="space-y-2">
+                    <label class="flex items-center text-sm text-gray-700 cursor-pointer">
+                        <input type="checkbox" name="trans" value="Manual" class="mr-2 w-4 h-4"> Manual
+                    </label>
+                    <label class="flex items-center text-sm text-gray-700 cursor-pointer">
+                        <input type="checkbox" name="trans" value="Automático" class="mr-2 w-4 h-4"> Automático
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Categoria</label>
+                <div class="space-y-2">
+                    <label class="flex items-center text-sm text-gray-700 cursor-pointer">
+                        <input type="checkbox" name="cat" value="Hatch" class="mr-2 w-4 h-4"> Hatch
+                    </label>
+                    <label class="flex items-center text-sm text-gray-700 cursor-pointer">
+                        <input type="checkbox" name="cat" value="Sedan" class="mr-2 w-4 h-4"> Sedan
+                    </label>
+                    <label class="flex items-center text-sm text-gray-700 cursor-pointer">
+                        <input type="checkbox" name="cat" value="SUV" class="mr-2 w-4 h-4"> SUV
+                    </label>
+                    <label class="flex items-center text-sm text-gray-700 cursor-pointer">
+                        <input type="checkbox" name="cat" value="Picape" class="mr-2 w-4 h-4"> Picape
+                    </label>
+                </div>
+            </div>
+
+            <button onclick="applyFilters()" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-3 rounded-md font-bold transition-all shadow-md">
+                Aplicar Filtros
+            </button>
+        </aside>
+
+        <main class="flex-1 p-8">
+            <h1 class="text-3xl font-bold mb-6 text-gray-900">Veículos Disponíveis (<span id="car-count">0</span>)</h1>
+            
+            <div id="cars-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+
+            <div id="empty-msg" class="hidden text-center py-20">
+                <i class="fas fa-search-minus text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">Nenhum veículo encontrado com esses filtros.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5107/api/veiculos'; 
+
+            // CARREGAMENTO INICIAL (DADOS E FILTROS)
+            window.onload = () => {
+                buscarVeiculosDoBanco();
+                carregarFiltrosDoBanco();
+                
+                // Atualiza visualmente o valor do preço conforme arrasta o slider
+                const priceSlider = document.getElementById('f-price');
+                priceSlider.addEventListener('input', (e) => {
+                    document.getElementById('price-val').innerText = `R$ ${parseInt(e.target.value).toLocaleString('pt-BR')}`;
+                });
+            };
+
+            // BUSCA VEÍCULOS NO BANCO
+            async function buscarVeiculosDoBanco() {
+                try {
+                    const response = await fetch(API_URL);
+                    const dados = await response.json();
+                    // CHAMADA CORRIGIDA: Agora o nome bate com a função abaixo
+                    renderizarCards(dados); 
+                } catch (error) {
+                    console.error("Erro ao conectar com a API:", error);
+                }
+            }
+
+            // CARREGA OPÇÕES DINÂMICAS DO BANCO (MARCAS, CORES, ETC)
+            async function carregarFiltrosDoBanco() {
+                try {
+                    const response = await fetch(`${API_URL}/filtros`);
+                    const filtros = await response.json();
+
+                    const preencherSelect = (id, lista, textoPadrao, campoDiferente = null) => {
+                        const select = document.getElementById(id);
+                        if (!select || !lista) return;
+                        
+                        select.innerHTML = `<option value="">${textoPadrao}</option>`;
+                        lista.forEach(item => {
+                            // Se for um objeto (como no caso do modelo), pegamos a propriedade .modelo
+                            const valor = campoDiferente ? item[campoDiferente] : item;
+                            if (valor) {
+                                select.innerHTML += `<option value="${valor}">${valor}</option>`;
+                            }
+                        });
+                    };
+
+                    // 1. Marcas: filtros.marcas vem como uma lista de strings ["Chevrolet", "Peugeot"]
+                    preencherSelect('f-brand', filtros.marcas, 'Todas');
+
+                    // 2. Modelos: filtros.veiculosCompletos vem como objetos [{id_veiculo: 1, modelo: "308"}]
+                    // Passamos 'modelo' como o 4º parâmetro para ele saber qual campo ler do objeto
+                    preencherSelect('f-model', filtros.veiculosCompletos, 'Todos', 'modelo');
+
+                    // 3. Cores: filtros.cores vem como lista de strings ["Branco", "Preto"]
+                    preencherSelect('f-color', filtros.cores, 'Todas');
+
+                } catch (error) {
+                    console.warn("Filtros dinâmicos não carregados, usando padrão.", error);
+                }
+            }
+
+            // APLICA OS FILTROS AO CLICAR NO BOTÃO
+            async function applyFilters() {
+                console.log("Filtrando veículos...");
+                const params = new URLSearchParams();
+
+                const marca = document.getElementById('f-brand').value;
+                const modelo = document.getElementById('f-model').value;
+                const cor = document.getElementById('f-color').value;
+                const precoMax = document.getElementById('f-price').value;
+                const kmMin = document.getElementById('f-km-min').value;
+                const kmMax = document.getElementById('f-km-max').value;
+
+                const cambios = Array.from(document.querySelectorAll('input[name="trans"]:checked')).map(el => el.value);
+                const categoriasSelecionadas = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(el => el.value);
+
+                if (marca) params.append('marca', marca);
+                if (modelo) params.append('modelo', modelo);
+                if (cor) params.append('cor', cor);
+                if (precoMax) params.append('precoMax', precoMax);
+                if (kmMin) params.append('kmMin', kmMin);
+                if (kmMax) params.append('kmMax', kmMax);
+                
+                if (cambios.length > 0) params.append('cambio', cambios[0]);
+                if (categoriasSelecionadas.length > 0) params.append('categoria', categoriasSelecionadas[0]);
+
+                try {
+                    const response = await fetch(`${API_URL}?${params.toString()}`);
+                    const dados = await response.json();
+                    renderizarCards(dados); // CHAMADA CORRIGIDA AQUI TAMBÉM
+                } catch (error) {
+                    console.error("Erro na filtragem:", error);
+                }
+            }
+
+            // RENDERIZA OS CARDS NA TELA (NOME UNIFICADO E CAMINHO DE FOTO CORRETO)
+            function renderizarCards(veiculos) {
+                // Usamos 'cars-container' para a página de veículos ou 'car-grid' para a home/financiamento
+                // Vamos tentar pegar o container disponível
+                const grid = document.getElementById('cars-container') || document.getElementById('car-grid');
+                const count = document.getElementById('car-count');
+
+                if (!grid) return;
+                grid.innerHTML = '';
+                
+                if (count) count.innerText = veiculos.length;
+
+                veiculos.forEach(carro => {
+                    const caminhoFoto = carro.imagem ? `Foto-carros/${carro.imagem}` : 'Foto-carros/sem-foto.jpg';
+
+                    grid.innerHTML += `
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all border border-gray-200 flex flex-col">
+                            <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
+                                <img src="${caminhoFoto}" 
+                                    alt="${carro.modelo}" 
+                                    class="w-full h-full object-contain hover:scale-110 transition-transform duration-500">
+                            </div>
+                            
+                            <div class="p-4 flex-grow">
+                                <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">${carro.marca}</span>
+                                <h3 class="font-bold text-lg text-gray-900 leading-tight">${carro.modelo}</h3>
+                                <p class="text-gray-500 text-[11px] mt-1 mb-2 uppercase tracking-tighter">
+                                    ${carro.cambio} | ${carro.cor} | ${carro.categoria} | ${carro.quilometragem}km
+                                </p>
+                                <p class="text-green-600 font-black mb-4 text-xl">R$ ${carro.preco.toLocaleString('pt-BR')}</p>
+                                <button onclick="window.location.href='financiamento.html?modelo=${encodeURIComponent(carro.modelo)}&preco=${carro.preco}'" 
+                                        class="mt-auto block w-full bg-slate-800 text-white py-3 rounded-md text-center text-sm font-bold hover:bg-slate-900 transition-colors">
+                                    Simular este veículo
+                                </button>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            // Inicialização unificada
+            window.onload = () => {
+                buscarVeiculosDoBanco();
+                carregarFiltrosDoBanco();
+            };
+    </script>
+        
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script>
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXX MOTORS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+
+    <header class="bg-slate-800 text-white h-20 flex items-center px-8 justify-between sticky top-0 z-50">
+    
+        <div class="flex items-center">
+            <a href="login.html">
+                <img src="logo-luxx4.jpg" alt="LUXX MOTORS" class="h-12 w-auto object-contain">
+            </a>
+        </div>
+
+        <nav>
+            <ul class="flex gap-6 text-sm font-medium">
+                <li><a href="index.html" class="hover:text-gray-300 transition-colors">Home</a></li>
+                <li><a href="veiculos.html" class="hover:text-gray-300 transition-colors">Veículos</a></li>
+                <li><a href="cadastro.html" class="hover:text-gray-300 transition-colors">Cadastro</a></li>
+                <li><a href="testdrive.html" class="hover:text-gray-300 transition-colors">Test Drive</a></li>
+                <li><a href="financiamento.html" class="hover:text-gray-300 transition-colors">Financiamento</a></li>
+                <li><a href="revisao.html" class="hover:text-gray-300 transition-colors">Revisão</a></li>
+            </ul>
+        </nav>
+
+        <form action="busca.html" method="GET" class="flex gap-2">
+            <input type="text" name="q" placeholder="Pesquisar carro..." 
+                class="px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-slate-400 text-sm">
+            <button type="submit" class="bg-slate-500 hover:bg-slate-600 px-4 py-2 rounded-md transition-colors text-sm">
+                Buscar
+            </button>
+        </form>
+    </header>
+
+    <div class="relative h-[calc(100vh-5rem)] bg-cover bg-center flex items-end" 
+         style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1920');">
+        <div class="pb-32 pl-16 text-white">
+            <h2 class="text-6xl font-bold mb-4">LUXX MOTORS</h2>
+            <p class="text-xl opacity-90">Sua concessionária de confiança</p>
+            <p class="text-lg opacity-90 mt-2">Carros novos e semi-novos, venha fazer um orçamento do seu carro!</p>
+        </div>
+    </div>
+
+    <section id="veiculos" class="bg-gray-100 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-12 text-gray-900">Nossos Veículos</h2>
+            
+            <div id="car-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                </div>
+        </div>
+    </section>
+
+    <script>
+        const API_URL = 'http://localhost:5107/api/veiculos';
+
+        async function carregarDestaquesHome() {
+            try {
+                const response = await fetch(API_URL);
+                const veiculos = await response.json();
+                
+                // Opcional: Mostrar apenas os primeiros 6 veículos na Home
+                const destaques = veiculos.slice(0, 6);
+                
+                renderizarGridHome(destaques);
+            } catch (error) {
+                console.error("Erro ao carregar destaques da Home:", error);
+            }
+        }
+
+        function renderizarGridHome(veiculos) {
+            const grid = document.getElementById('car-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = ''; 
+
+            veiculos.forEach(carro => {
+                // Define o caminho da foto ou uma imagem padrão caso não exista
+                const caminhoFoto = carro.imagem ? `Foto-carros/${carro.imagem}` : 'Foto-carros/sem-foto.jpg';
+
+                grid.innerHTML += `
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-transparent hover:border-slate-800 flex flex-col">
+                        
+                        <div class="w-full h-48 bg-gray-50 overflow-hidden">
+                            <img src="${caminhoFoto}" 
+                                alt="${carro.modelo}" 
+                                class="w-full h-full object-contain p-2">
+                        </div>
+
+                        <div class="p-4 flex-grow">
+                            <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">${carro.marca}</span>
+                            <h3 class="font-bold text-lg mb-1 text-gray-900">${carro.modelo}</h3>
+                            <p class="text-gray-500 text-[11px] mb-4 uppercase font-semibold">
+                                ${carro.ano} | ${carro.cambio} | ${carro.categoria}
+                            </p>
+                            
+                            <div class="flex justify-between items-center border-t pt-4 mt-auto">
+                                <span class="text-xl font-bold text-slate-800">R$ ${carro.preco.toLocaleString('pt-BR')}</span>
+                                <a href="veiculos.html" class="bg-slate-800 text-white px-4 py-2 rounded text-xs font-bold hover:bg-slate-600 transition-colors">Ver Mais</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Chama a função assim que a página carregar
+        window.onload = carregarDestaquesHome;
+    </script>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script>
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        </script>
+</body>
+</html>

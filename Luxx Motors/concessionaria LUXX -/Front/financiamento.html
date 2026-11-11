@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financiamento - LUXX MOTORS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <header class="bg-slate-800 text-white h-20 flex items-center px-8 justify-between sticky top-0 z-50">
+        
+        <div class="flex items-center">
+            <a href="index.html">
+                <img src="logo-luxx4.jpg" alt="LUXX MOTORS" class="h-12 w-auto object-contain">
+            </a>
+        </div>
+
+        <nav>
+            <ul class="flex gap-6 text-sm font-medium">
+                <li><a href="index.html" class="hover:text-gray-300">Home</a></li>
+                <li><a href="veiculos.html" class="hover:text-gray-300">Veículos</a></li>
+                <li><a href="cadastro.html" class="hover:text-gray-300">Cadastro</a></li>
+                <li><a href="testdrive.html" class="hover:text-gray-300">Test Drive</a></li>
+                <li><a href="financiamento.html" class="text-gray-300 border-b-2 border-gray-300">Financiamento</a></li>
+                <li><a href="revisao.html" class="hover:text-gray-300">Revisão</a></li>
+            </ul>
+        </nav>
+
+        <form action="busca.html" method="GET" class="flex gap-2">
+            <input type="text" name="q" placeholder="Pesquisar carro..." 
+                class="px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-slate-400 text-sm">
+            <button type="submit" class="bg-slate-500 hover:bg-slate-600 px-4 py-2 rounded-md transition-colors text-sm">
+                Buscar
+            </button>
+        </form>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        
+        <section id="section-escolha">
+            <h1 class="text-3xl font-bold text-center mb-4 text-gray-900">Simulação de Financiamento</h1>
+            <p class="text-center text-gray-600 mb-12">Selecione o veículo abaixo para iniciar sua simulação.</p>
+            <div id="car-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+        <section id="section-simulacao" class="hidden max-w-3xl mx-auto">
+            <button onclick="voltarParaEscolha()" class="mb-6 text-slate-800 font-bold hover:underline">
+                <i class="fas fa-arrow-left mr-2"></i> Voltar para a lista
+            </button>
+
+            <div class="flex border-b border-gray-300 mb-8 bg-white rounded-t-lg overflow-hidden">
+                <button id="tab-pessoal" onclick="toggleSimuTab('pessoal')" class="flex-1 py-4 text-center font-bold border-b-4 border-slate-800 text-slate-800 transition-all">
+                    1. Informações Pessoais
+                </button>
+                <button id="tab-calculo" onclick="toggleSimuTab('calculo')" disabled class="flex-1 py-4 text-center font-bold border-b-4 border-transparent text-gray-400 transition-all">
+                    2. Simulação de Parcelas
+                </button>
+            </div>
+
+            <div id="content-pessoal" class="bg-white rounded-b-lg shadow-md p-8 space-y-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Seus dados para análise</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nome Completo</label>
+                        <input type="text" id="p-nome" required class="w-full p-3 border rounded-md outline-none focus:ring-2 focus:ring-slate-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">CPF</label>
+                        <input type="text" id="p-cpf" placeholder="000.000.000-00" maxlength="14" class="w-full p-3 border rounded-md outline-none focus:ring-2 focus:ring-slate-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">E-mail</label>
+                        <input type="email" id="p-email" required class="w-full p-3 border rounded-md outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Telefone</label>
+                        <input type="text" id="p-tel" placeholder="(00) 00000-0000" class="w-full p-3 border rounded-md outline-none">
+                    </div>
+                </div>
+                <button onclick="toggleSimuTab('calculo')" class="w-full bg-slate-800 text-white py-4 rounded-md font-bold hover:bg-slate-900 shadow-lg mt-4">
+                    Avançar para Cálculo
+                </button>
+            </div>
+
+            <div id="content-calculo" class="hidden bg-white rounded-b-lg shadow-md p-8 space-y-6">
+                <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500 flex items-center justify-between mb-6">
+                    <div>
+                        <h3 id="display-car-name" class="font-bold text-xl text-slate-800">Carro</h3>
+                        <p id="display-car-price" class="text-green-600 font-bold text-2xl">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Valor de Entrada (R$)</label>
+                        <input type="number" id="input-downpayment" oninput="calcular()" class="w-full p-4 border-2 rounded-lg text-xl font-bold outline-none focus:border-slate-800">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-3">Parcelas</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="setParcelas(24, this)" class="btn-parc p-3 border-2 rounded font-bold">24x</button>
+                            <button onclick="setParcelas(48, this)" class="btn-parc p-3 border-2 border-slate-800 bg-slate-800 text-white rounded font-bold">48x</button>
+                            <button onclick="setParcelas(60, this)" class="btn-parc p-3 border-2 rounded font-bold">60x</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 text-white p-8 rounded-xl text-center shadow-lg">
+                        <p class="text-sm opacity-80 uppercase mb-2">Parcela Mensal Estimada</p>
+                        <h2 id="resultado-parcela" class="text-4xl font-black">R$ 0,00</h2>
+                    </div>
+
+                    <button id="btnEnviarProposta" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-md font-black text-lg transition-all">
+                        ENVIAR PROPOSTA
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    const API_URL = 'http://localhost:5107/api/veiculos';
+    let selectedPrice = 0;
+    let selectedVehicleId = null; // Armazena o ID do carro escolhido no grid
+    let numParcelas = 48;
+    let clienteIdEncontrado = null;
+
+    // --- 1. IDENTIFICAÇÃO DO CLIENTE ---
+    async function buscarClienteParaSimulacao() {
+        const cpfInput = document.getElementById('p-cpf').value;
+        
+        if (cpfInput.length >= 14) {
+            try {
+                const response = await fetch(`http://localhost:5107/api/clientes/verificar/${encodeURIComponent(cpfInput)}`);
+                
+                if (response.ok) {
+                    const cliente = await response.json();
+                    clienteIdEncontrado = cliente.id_cliente;
+                    
+                    document.getElementById('p-nome').value = cliente.nome_completo || "";
+                    document.getElementById('p-email').value = cliente.email || "";
+                    document.getElementById('p-tel').value = cliente.telefone || "";
+                    
+                    console.log("Cliente identificado: ID " + clienteIdEncontrado);
+                } else {
+                    clienteIdEncontrado = null;
+                    alert("❌ CPF não localizado! Por favor, realize o seu cadastro na Luxx Motors primeiro.");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar cliente:", error);
+            }
+        }
+    }
+
+    // --- 2. CARREGAMENTO DE VEÍCULOS ---
+    async function buscarVeiculosParaFinanciamento() {
+        try {
+            const response = await fetch(API_URL);
+            const veiculos = await response.json();
+            renderCars(veiculos);
+        } catch (error) {
+            console.error("Erro ao carregar veículos:", error);
+        }
+    }
+
+    function renderCars(veiculos) {
+        const grid = document.getElementById('car-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        
+        veiculos.forEach(carro => {
+            const caminhoFoto = carro.imagem ? `Foto-carros/${carro.imagem}` : 'Foto-carros/sem-foto.jpg';
+
+            grid.innerHTML += `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all border border-gray-200 flex flex-col">
+                    <div class="w-full h-40 bg-gray-50 flex items-center justify-center overflow-hidden">
+                        <img src="${caminhoFoto}" alt="${carro.modelo}" class="w-full h-full object-contain p-2 hover:scale-105 transition-transform">
+                    </div>
+                    <div class="p-4 flex-grow flex flex-col">
+                        <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">${carro.marca}</span>
+                        <h3 class="font-bold text-gray-900 leading-tight">${carro.modelo}</h3>
+                        <p class="text-green-600 font-bold mt-1 mb-4 text-lg">R$ ${carro.preco.toLocaleString('pt-BR')}</p>
+                        <button onclick="selecionarCarro('${carro.modelo}', ${carro.preco}, ${carro.id_veiculo})" 
+                                class="mt-auto block w-full bg-slate-800 text-white py-2 rounded text-center text-sm font-bold hover:bg-slate-900">
+                            Simular este veículo
+                        </button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    // --- 3. LÓGICA DE SIMULAÇÃO E CÁLCULO ---
+    function selecionarCarro(name, price, id) {
+        selectedPrice = price;
+        selectedVehicleId = id; // Guardamos o ID para o POST final
+        document.getElementById('display-car-name').innerText = name;
+        document.getElementById('display-car-price').innerText = `R$ ${price.toLocaleString('pt-BR')}`;
+        document.getElementById('input-downpayment').value = price * 0.2;
+        
+        document.getElementById('section-escolha').classList.add('hidden');
+        document.getElementById('section-simulacao').classList.remove('hidden');
+        toggleSimuTab('pessoal');
+        calcular(); // Já calcula a primeira vez
+    }
+
+    function calcular() {
+        const entrada = parseFloat(document.getElementById('input-downpayment').value) || 0;
+        const taxaMensal = 0.0149; 
+        const valorFinanciado = selectedPrice - entrada;
+
+        if (valorFinanciado <= 0) {
+            document.getElementById('resultado-parcela').innerText = "R$ 0,00";
+            return;
+        }
+
+        const i = taxaMensal;
+        const n = numParcelas;
+        const parcela = valorFinanciado * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+
+        document.getElementById('resultado-parcela').innerText = `R$ ${parcela.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2
+        })}`;
+    }
+
+    // --- 4. ENVIO DA PROPOSTA (POST) ---
+    async function enviarPropostaParaBanco() {
+        if (!clienteIdEncontrado) {
+            alert("❌ Erro: Cliente não identificado. Volte à aba anterior.");
+            return;
+        }
+
+        // 1. Captura e limpa o valor da parcela (resultado do cálculo)
+        const valorTexto = document.getElementById('resultado-parcela').innerText;
+        
+        // Remove R$, pontos de milhar e troca vírgula por ponto
+        const valorLimpo = valorTexto
+            .replace('R$', '')
+            .replace(/\./g, '')
+            .replace(',', '.')
+            .trim();
+
+        const valorNumerico = parseFloat(valorLimpo) || 0;
+
+        // 2. Monta o objeto EXATAMENTE como está no seu Model C#
+        const proposta = {
+            Id_cliente: clienteIdEncontrado,
+            Id_veiculo: selectedVehicleId,
+            Parcelas: numParcelas,
+            Valor_simulado: valorNumerico, // Nome atualizado conforme seu banco
+            // O campo 'juros' não precisa enviar, o C# coloca 1.50 automático
+            Data_simulacao: new Date().toISOString()
+        };
+
+        console.log("Enviando para a Luxx Motors:", proposta);
+
+        try {
+            const response = await fetch('http://localhost:5107/api/financiamentos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(proposta)
+            });
+
+            if (response.ok) {
+                alert('✅ Proposta enviada com sucesso para a Luxx Motors!');
+                window.location.href = "index.html";
+            } else {
+                const erro = await response.json();
+                alert('❌ Erro ao salvar: ' + (erro.erro || 'Verifique o terminal do C#'));
+            }
+        } catch (error) {
+            console.error("Erro de conexão:", error);
+            alert('❌ Erro de conexão com o servidor.');
+        }
+    }
+
+    // --- 5. NAVEGAÇÃO E EVENTOS ---
+    function toggleSimuTab(proximaTab) {
+        if (proximaTab === 'calculo') {
+            const nome = document.getElementById('p-nome').value.trim();
+            const cpf = document.getElementById('p-cpf').value.trim();
+
+            if (!nome || !cpf || !clienteIdEncontrado) {
+                alert("⚠️ Identifique-se pelo CPF antes de prosseguir.");
+                return;
+            }
+        }
+
+        const abaPessoal = document.getElementById('content-pessoal');
+        const abaCalculo = document.getElementById('content-calculo');
+        
+        if (proximaTab === 'calculo') {
+            abaPessoal.classList.add('hidden');
+            abaCalculo.classList.remove('hidden');
+            document.getElementById('tab-pessoal').classList.replace('border-slate-800', 'border-transparent');
+            document.getElementById('tab-calculo').classList.replace('border-transparent', 'border-slate-800');
+        } else {
+            abaPessoal.classList.remove('hidden');
+            abaCalculo.classList.add('hidden');
+            document.getElementById('tab-calculo').classList.replace('border-slate-800', 'border-transparent');
+            document.getElementById('tab-pessoal').classList.replace('border-transparent', 'border-slate-800');
+        }
+    }
+
+    function setParcelas(n, btn) {
+        numParcelas = n;
+        document.querySelectorAll('.btn-parc').forEach(b => b.classList.remove('bg-slate-800', 'text-white'));
+        btn.classList.add('bg-slate-800', 'text-white');
+        calcular();
+    }
+
+    // Inicialização e Event Listeners
+    window.onload = buscarVeiculosParaFinanciamento;
+
+    document.getElementById('p-cpf').addEventListener('blur', buscarClienteParaSimulacao);
+    
+    // O seu botão "Enviar Proposta" deve chamar esta função:
+    const btnProposta = document.getElementById('btnEnviarProposta');
+    if(btnProposta) {
+        btnProposta.addEventListener('click', enviarPropostaParaBanco);
+    }
+
+    // Máscara CPF
+    document.getElementById('p-cpf').addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+        v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        e.target.value = v;
+    });
+</script>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script>
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        </script>
+</body>
+</html>

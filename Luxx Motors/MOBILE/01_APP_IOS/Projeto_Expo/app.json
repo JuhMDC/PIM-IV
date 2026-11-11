@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "LUXX MOTORS",
+    "slug": "luxx-motors",
+    "scheme": "luxxmotors",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/app-icon.png",
+    "splash": {
+      "image": "./assets/app-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#141E30"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "br.com.luxxmotors.app",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false
+        }
+      }
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

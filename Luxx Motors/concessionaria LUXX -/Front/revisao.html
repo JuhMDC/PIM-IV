@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento de Revisão - LUXX MOTORS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-800 min-h-screen">
+
+    <header class="bg-slate-800 text-white h-20 flex items-center px-8 justify-between sticky top-0 z-50">
+    
+        <div class="flex items-center">
+            <a href="index.html">
+            <img src="logo-luxx4.jpg" alt="LUXX MOTORS" class="h-12 w-auto object-contain">
+            </a>
+        </div>
+
+    <nav>
+        <ul class="flex gap-6 text-sm font-medium">
+            <li><a href="index.html" class="hover:text-gray-300 transition-colors">Home</a></li>
+            <li><a href="veiculos.html" class="hover:text-gray-300 transition-colors">Veículos</a></li>
+            <li><a href="cadastro.html" class="hover:text-gray-300 transition-colors">Cadastro</a></li>
+            <li><a href="testdrive.html" class="hover:text-gray-300 transition-colors">Test Drive</a></li>
+            <li><a href="financiamento.html" class="hover:text-gray-300 transition-colors">Financiamento</a></li>
+            <li><a href="revisao.html" class="hover:text-gray-300 transition-colors">Revisão</a></li>
+        </ul>
+    </nav>
+
+    <form action="busca.html" method="GET" class="flex gap-2">
+        <input type="text" name="q" placeholder="Pesquisar carro..." 
+               class="px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-slate-400 text-sm">
+        <button type="submit" class="bg-slate-500 hover:bg-slate-600 px-4 py-2 rounded-md transition-colors text-sm">
+            Buscar
+        </button>
+    </form>
+</header>
+
+    <div class="max-w-5xl mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <div class="flex items-center justify-center mb-8">
+                <i class="fas fa-tools text-4xl text-gray-700 mr-4"></i>
+                <h1 class="text-4xl font-bold text-gray-900">Agendamento de Revisão</h1>
+            </div>
+
+            <div class="flex items-center justify-center mb-12">
+                <div id="step1-circle" class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-600 text-white font-bold">1</div>
+                <div id="line1" class="w-24 h-1 bg-gray-300"></div>
+                <div id="step2-circle" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-white font-bold">2</div>
+                <div id="line2" class="w-24 h-1 bg-gray-300"></div>
+                <div id="step3-circle" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-white font-bold">3</div>
+            </div>
+
+            <div id="step1-content">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Dados do Cliente</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <input type="text" id="nome" placeholder="Nome Completo *" class="p-3 border rounded-md outline-none focus:ring-2 focus:ring-slate-500">
+                    <input type="text" id="cpf" placeholder="CPF *" class="p-3 border rounded-md outline-none">
+                    <input type="text" id="telefone" placeholder="Telefone *" class="p-3 border rounded-md outline-none">
+                    <input type="email" id="email" placeholder="E-mail *" class="p-3 border rounded-md outline-none">
+                </div>
+                
+                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Dados do Veículo</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <input type="text" id="marca" placeholder="Marca do Veículo *" class="p-3 border rounded-md outline-none">
+                    <input type="text" id="modelo" placeholder="Modelo *" class="p-3 border rounded-md outline-none">
+                    <input type="text" id="ano" placeholder="Ano *" class="p-3 border rounded-md outline-none">
+                    <input type="text" id="placa" placeholder="Placa (ABC-1234) *" class="p-3 border rounded-md outline-none">
+                    <input type="number" id="km" placeholder="Quilometragem Atual *" class="p-3 border rounded-md outline-none md:col-span-2">
+                </div>
+                <button onclick="goToStep(2)" class="w-full bg-slate-600 hover:bg-slate-700 text-white py-4 rounded-md font-bold text-lg">Continuar</button>
+            </div>
+
+            <div id="step2-content" class="hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Selecione os serviços:</h2>
+                <div id="servicos-lista" class="space-y-4 mb-8">
+                    </div>
+                <div class="flex gap-4">
+                    <button onclick="goToStep(1)" class="flex-1 bg-gray-300 py-4 rounded-md font-bold">Voltar</button>
+                    <button onclick="goToStep(3)" class="flex-1 bg-slate-600 text-white py-4 rounded-md font-bold">Continuar</button>
+                </div>
+            </div>
+
+            <div id="step3-content" class="hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Escolha a data</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Data de Preferência *</label>
+                        <input type="date" id="data-pref" class="w-full p-3 border rounded-md outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Horário</label>
+                        <select id="hora-pref" class="w-full p-3 border rounded-md outline-none">
+                            <option value="">Selecione...</option>
+                            <option>08:00</option><option>10:00</option><option>14:00</option><option>16:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="goToStep(2)" class="flex-1 bg-gray-300 py-4 rounded-md font-bold">Voltar</button>
+                    <button onclick="finalizar()" class="flex-1 bg-green-700 text-white py-4 rounded-md font-bold">Confirmar Agendamento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_CLIENTES = 'http://localhost:5107/api/clientes/verificar/';
+        const API_VEICULOS = 'http://localhost:5107/api/veiculos';
+        const API_VENDEDORES = 'http://localhost:5107/api/vendedores'; // Rota para buscar vendedores
+        
+        let clienteIdEncontrado = null;
+        let veiculoIdEncontrado = null;
+        let vendedorIdSelecionado = null;
+        let selecionados = [];
+
+        // --- 1. BUSCA DE CLIENTE POR CPF ---
+        document.getElementById('cpf').addEventListener('blur', async (e) => {
+            const cpf = e.target.value;
+            if (cpf.length < 14) return;
+
+            try {
+                const response = await fetch(API_CLIENTES + encodeURIComponent(cpf));
+                if (response.ok) {
+                    const cliente = await response.json();
+                    clienteIdEncontrado = cliente.id_cliente;
+                    document.getElementById('nome').value = cliente.nome_completo;
+                    document.getElementById('email').value = cliente.email;
+                    document.getElementById('telefone').value = cliente.telefone;
+                    console.log("Cliente localizado: ID " + clienteIdEncontrado);
+                } else {
+                    if (confirm("CPF não encontrado na base Luxx Motors. Deseja ir para a página de cadastro?")) {
+                        window.location.href = "cadastro.html";
+                    }
+                }
+            } catch (error) {
+                console.error("Erro ao buscar cliente", error);
+            }
+        });
+
+        // --- 2. BUSCA DE VEÍCULO E SORTEIO DE VENDEDOR POS-VENDA ---
+        document.getElementById('modelo').addEventListener('blur', async (e) => {
+            const modeloDigitado = e.target.value.trim();
+            if (modeloDigitado.length < 2) return;
+
+            try {
+                // Busca Veículo
+                const respV = await fetch(API_VEICULOS);
+                const veiculos = await respV.json();
+                const vEncontrado = veiculos.find(v => v.modelo.toLowerCase() === modeloDigitado.toLowerCase());
+
+                if (vEncontrado) {
+                    veiculoIdEncontrado = vEncontrado.id_veiculo;
+                    document.getElementById('marca').value = vEncontrado.marca;
+                    document.getElementById('ano').value = vEncontrado.ano || "";
+                    
+                    // Agora busca Vendedores elegíveis (Pós-Venda)
+                    const respVend = await fetch(API_VENDEDORES);
+                    const todosVendedores = await respVend.json();
+                    
+                    // Filtra apenas quem tem "posvenda" no cargo
+                    const elegiveis = todosVendedores.filter(vend => 
+                        vend.cargo.toLowerCase().includes('posvenda')
+                    );
+
+                    if (elegiveis.length > 0) {
+                        // Sorteia um vendedor de Pós-Venda aleatório
+                        const sorteado = elegiveis[Math.floor(Math.random() * elegiveis.length)];
+                        vendedorIdSelecionado = sorteado.id_vendedor;
+                        console.log(`Vendedor Pós-Venda designado: ${sorteado.nome} (ID: ${vendedorIdSelecionado})`);
+                    }
+                } else {
+                    alert("⚠️ Atenção: Este modelo não consta em nossa base de veículos.");
+                    veiculoIdEncontrado = null;
+                }
+            } catch (error) {
+                console.error("Erro na integração de dados", error);
+            }
+        });
+
+        // --- 3. LOGICA DE SERVIÇOS ---
+        const servicos = [
+            { id: 'motor', titulo: 'Revisão Completa do Motor', desc: 'Diagnóstico avançado e ajustes.' },
+            { id: 'freios', titulo: 'Sistema de Freios e Suspensão', desc: 'Verificação para condução segura.' },
+            { id: 'oleo', titulo: 'Troca de Óleo e Filtros', desc: 'Produtos de alta qualidade.' }
+        ];
+
+        const listaDiv = document.getElementById('servicos-lista');
+        servicos.forEach(s => {
+            listaDiv.innerHTML += `
+                <div onclick="toggleServico('${s.id}')" id="card-${s.id}" class="p-6 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-slate-400 transition-all">
+                    <h3 class="text-lg font-bold">${s.titulo}</h3>
+                    <p class="text-gray-600 text-sm">${s.desc}</p>
+                </div>
+            `;
+        });
+
+        function toggleServico(id) {
+            const card = document.getElementById(`card-${id}`);
+            if (selecionados.includes(id)) {
+                selecionados = selecionados.filter(item => item !== id);
+                card.classList.remove('border-slate-900', 'bg-gray-50');
+                card.classList.add('border-gray-300');
+            } else {
+                selecionados.push(id);
+                card.classList.remove('border-gray-300');
+                card.classList.add('border-slate-900', 'bg-gray-50');
+            }
+        }
+
+        function goToStep(n) {
+            if (n === 2 && !clienteIdEncontrado) {
+                alert("Por favor, identifique-se pelo CPF primeiro.");
+                return;
+            }
+            document.querySelectorAll('[id$="-content"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`step${n}-content`).classList.remove('hidden');
+            for(let i=1; i<=3; i++) {
+                const circle = document.getElementById(`step${i}-circle`);
+                if (i <= n) circle.classList.replace('bg-gray-300', 'bg-slate-600');
+                else circle.classList.replace('bg-slate-600', 'bg-gray-300');
+            }
+        }
+
+        // --- 4. FINALIZAÇÃO (POST PARA O BANCO) ---
+        async function finalizar() {
+            const data = document.getElementById('data-pref').value;
+            const hora = document.getElementById('hora-pref').value;
+            const placa = document.getElementById('placa').value;
+
+            if(!data || !hora || selecionados.length === 0 || !placa) {
+                alert("⚠️ Preencha todos os campos e selecione ao menos um serviço!");
+                return;
+            }
+
+            if(!veiculoIdEncontrado) {
+                alert("⚠️ Veículo não identificado. Certifique-se de digitar um modelo válido da Luxx Motors.");
+                return;
+            }
+
+            // Monta o objeto conforme sua tabela REVISAO
+            const agendamento = {
+                id_cliente: clienteIdEncontrado,
+                id_veiculo: veiculoIdEncontrado,
+                id_vendedor: vendedorIdSelecionado || 1, // Fallback para ID 1 se o sorteio falhar
+                data_revisao: data,
+                status: "Agendado",
+                forma_pagamento: "A combinar",
+                servico: selecionados.join(', ')
+            };
+
+            try {
+                const response = await fetch('http://localhost:5107/api/revisoes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(agendamento)
+                });
+
+                if (response.ok) {
+                    alert("✅ Revisão agendada com sucesso na LUXX MOTORS!");
+                    window.location.href = "index.html";
+                } else {
+                    alert("❌ Erro ao salvar agendamento. Verifique os dados.");
+                }
+            } catch (error) {
+                alert("❌ Erro de conexão com o servidor.");
+            }
+        }
+
+        // Máscara CPF
+        document.getElementById('cpf').addEventListener('input', e => {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            e.target.value = v;
+        });
+    </script>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script>
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        </script>
+</body>
+</html>
